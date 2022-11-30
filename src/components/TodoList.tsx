@@ -1,59 +1,41 @@
+import { Button, TextField } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import todo from "../store/todo";
 import "../style.scss";
+import FilterBlock from "./FilterBlock";
 
 const TodoList = observer(() => {
-  const [value, setValue] = useState("");
+    const [value, setValue] = useState("");
 
-  function click() {
-    todo.addTodo({ id: Date.now(), title: value, completed: false, className: "todo" });
-  }
+    function click() {
+        todo.addTodo({ id: Date.now(), title: value, completed: false });
+        setValue("");
+    }
 
-  return (
-    <div className="container">
-      <h1>Task manager</h1>
-      <form className="add-block">
-        <input
-          placeholder="enter your task"
-          className="input"
-          type="text"
-          onChange={(event) => setValue(event.target.value)}
-        />
-        <button onClick={click!}>add</button>
-      </form>
-      {todo.todos.map((t) => (
-        <div className={t.className} key={t.id}>
-          <input
-            type="checkbox"
-            checked={t.completed}
-            onChange={() => todo.completeTodo(t.id)}
-          />
-          {t.title}
-          <button
-            className="remove-button"
-            onClick={() => todo.removeTodo(t.id)}
-          >
-            remove
-          </button>
+    return (
+        <div className="container">
+            <h1>Task manager</h1>
+            <div className="form">
+                {" "}
+                <TextField value={value} onChange={(event) => setValue(event.target.value)} size={"small"} />
+                <Button onClick={click!} size={"small"}>
+                    add
+                </Button>
+            </div>
+
+            {todo.todos.map((t) => (
+                <div className={"todo"} key={t.id}>
+                    <input type="checkbox" checked={t.completed} onChange={() => todo.completeTodo(t.id)} />
+                    {t.title}
+                    <Button onClick={() => todo.removeTodo(t.id)} size={"small"}>
+                        remove
+                    </Button>
+                </div>
+            ))}
+            <FilterBlock />
         </div>
-      ))}
-      <div className="buttons-area">
-        <button
-          onClick={() => todo.filterCompleted()}
-          className="filter-button"
-        >
-          show done
-        </button>
-        <button onClick={() => todo.filterAll()} className="filter-button">
-          show all
-        </button>
-        <button onClick={() => todo.filterActive()} className="filter-button">
-          show active
-        </button>
-      </div>
-    </div>
-  );
+    );
 });
 
 export default TodoList;
